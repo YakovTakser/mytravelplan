@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+    {% block content %}
+        <!--Posts showing-->
+        {% for post in posts.items %}
+             <article class="media content-section">
+       <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="{{url_for('users.user_account_show', username=post.author.username)}}">{{ post.author.username }}</a>
+          <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+            {% if post.author == current_user or current_user.admin_permissions == 1 %}
+            <div>
+                <a class="btn btn-secondary btn-sm m-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id ) }}">Update</a>
+                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <h3 class="text-info"><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h3>
+          <h5 class="article-title text-info">Traveling country: {{ post.country }}</h5>
+        <p class="article-content">{{ post.content }}</p>
+          <h6 class="text-info">Trip rate {%for i in range(0, post.rate)%} <span>&#11088;</span>{% endfor %}</h6>
+          <div class="row">
+              <!--Form of like-->
+          <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                   <input id="1" name="id" type="hidden" value="{{ post.id }}">
+                    <input id="2" name="like_or_unlike" type="hidden" value="like">
+                    <div class="form-group">
+                        {{ form.like(class="btn btn-outline-primary btn-md") }}
+                    </div>
+           </form>
+              &nbsp;
+              <!--Form of unlike-->
+          <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                   <input id="3" name="id" type="hidden" value="{{ post.id }}">
+                    <input id="4" name="like_or_unlike" type="hidden" value="unlike">
+                    <div class="form-group">
+                        {{ form.unlike(class="btn btn-outline-dark btn-md") }}
+                    </div>
+           </form>
+          </div>
+          <div class="row pull-right">
+              <!--Amount of comments and comment icon-->
+              <div class="pull-right">{{ post.amount_of_comments }}&nbsp;<i class="fa fa-comment-o" style="font-size:19px;"></i></div>
+              <!--Space-->&nbsp;
+              <!--Amount of likes and heart icon-->
+              <div class="pull-right">{{ post.amount_of_likes }}&nbsp;&#128153;</div>
+          </div>
+      </div>
+    </article>
+        {% endfor %}
+        <!--Posts showing End-->
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if posts.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+        {% endif %}
+        {% endfor %}
+    {% endblock %}

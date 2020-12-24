@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+    {% block content %}
+<!--Menu-->
+    <h2>Messages</h2>
+
+<table style="width:100%">
+
+    <td width="100">
+        <a href="{{ url_for('messages.new_message', receiver='Name of receiver here..') }}" class="btn btn-danger btn-md btn-block" role="button"><i class="glyphicon glyphicon-edit"></i>New</a></td>
+    <td width="100">
+
+         <a href="{{ url_for('messages.inbox') }}" class="btn btn-md btn-block" ><span class="badge badge-warning pull-right">{{ msg_counters[0] }}</span>Inbox&nbsp; </a>
+    </td>
+    <td width="100">
+        <a href="{{ url_for('messages.unread_messages') }}" class="btn btn-md btn-block"><span class="badge badge-warning pull-right">{{ msg_counters[1] }}</span>Unread&nbsp; </a>
+    </td>
+     <td width="100">
+        <a href="{{ url_for('messages.sent_messages') }}" class="btn btn-md btn-block"><span class="badge badge-warning pull-right">{{ msg_counters[2] }}</span>Sent&nbsp; </a>
+    </td>
+     {% if current_user.admin_permissions == 1 %}
+                <a href="{{ url_for('messages.new_message_to_all') }}" class="btn btn-danger btn-md btn-block" role="button"><i class="glyphicon glyphicon-edit"></i>Message all</a></td>
+     {% endif %}
+
+</table>
+<legend class="border-bottom mb-4">New Message</legend>
+        <div class="content-section">
+            <form class="round" method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+
+                    <div class="form-group">
+                        {{ form.subject.label(class="form-control-label") }}
+                         {% if form.subject.errors %}
+                            {{ form.subject(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.subject.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.subject(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                     <div class="form-group">
+                        {{ form.receiver.label(class="form-control-label") }}
+                         {% if form.receiver.errors %}
+                            {{ form.receiver(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.receiver.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.receiver(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+
+                     <div class="form-group">
+                        {{ form.content.label(class="form-control-label") }}
+                         {% if form.content.errors %}
+                            {{ form.content(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+           </form>
+        </div>
+    {% endblock %}
+
+

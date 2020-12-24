@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Post -->
+       <article class="media content-section">
+           <div>
+               <div>
+                    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+               </div>
+                <div class="rounded" style="color:#05d3f7;">
+                    <p ><small>Level {{post.author.level_of_user}}
+                    </small></p>
+            </div>
+
+               </div>
+      <div class="media-body">
+        <div class="article-metadata">
+          <a class="mr-2" href="{{url_for('users.user_account_show', username=post.author.username)}}">{{ post.author.username }}</a>
+
+          <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+            {% if post.author == current_user or current_user.admin_permissions == 1 %}
+            <div>
+                <a class="btn btn-secondary btn-sm m-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id ) }}">Update</a>
+                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <h3 class="text-info"><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h3>
+          <h5 class="article-title text-info">Traveling country: {{ post.country }}</h5>
+        <p class="article-content">{{ post.content }}</p>
+          <h6 class="text-info">Trip rate {%for i in range(0, post.rate)%} <span>&#11088;</span>{% endfor %}</h6>
+          <div class="row">
+              <!--Form of like-->
+          <form method="POST" action="" enctype="multipart/form-data">
+                {{ formLikes.hidden_tag() }}
+                   <input id="1" name="id" type="hidden" value="{{ post.id }}">
+                    <input id="2"  name="like_or_unlike" type="hidden" value="like">
+                    <input type="hidden" name="form-name" value="formLikes">
+                    <div class="form-group">
+                        {{ formLikes.like(class="btn btn-outline-primary btn-md") }}
+                    </div>
+           </form>
+              &nbsp;
+              <!--Form of unlike-->
+          <form method="POST" action="" enctype="multipart/form-data">
+                {{ formLikes.hidden_tag() }}
+                   <input id="3" name="id" type="hidden" value="{{ post.id }}">
+                    <input id="4" name="like_or_unlike" type="hidden" value="unlike">
+                    <input type="hidden" name="form-name" value="formLikes">
+                    <div class="form-group">
+                        {{ formLikes.unlike(class="btn btn-outline-dark btn-md") }}
+                    </div>
+           </form>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <!--Add post form-->
+
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ add_post_form.hidden_tag() }}
+                   <input id="5" name="id" type="hidden" value="{{ post.id }}">
+                    <input id="6"  name="addPost" type="hidden" value="addPost">
+                     <input type="hidden" name="form-name" value="add_post_form">
+                    <div class="form-group">
+                        {{ add_post_form.add(class="btn btn-outline-primary btn-md") }}
+                    </div>
+           </form>
+
+
+          </div>
+          <div class="row pull-right">
+              <!--Amount of comments and comment icon-->
+              <div class="pull-right">{{ post.amount_of_comments }}&nbsp;<i class="fa fa-comment-o" style="font-size:19px;"></i></div>
+              <!--Space-->&nbsp;
+              <!--Amount of likes and heart icon-->
+              <div class="pull-right">{{ post.amount_of_likes }}&nbsp;&#128153;</div>
+          </div>
+      </div>
+    </article>
+
+<!--Gallery of posts-->
+
+<style>
+input[type="button"], input[type="text"] {
+    padding: 5px 5px;
+    text-align: center;
+    margin: 7px 7px;
+    font-size: 1em;
+    box-shadow: 2px 2px 2px #535050;
+    border-radius: 5px;
+    background-color: #2e2d2d;
+    color: #eee;
+    outline-style: none;
+    width: 100px;
+    clear: both;
+}
+.todo{
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    clear: both;
+}
+.explain{
+    border-top: 1px solid #2e2d2d;
+    text-align: left;
+    margin: 30px auto;
+    padding-top: 10px;
+    width: 80%;
+}
+/*******************************
+ *  MAIN CSS
+ *******************************/
+.gallery {
+    width: 50%;
+    margin: 5px auto;
+}
+.big-pic {
+    /* entire gallery width */
+    flex-basis: 100%;
+}
+.big-pic img {
+    width: 100%;
+    display: block
+ }
+.thumbnails {
+    /* flex row container */
+    display: flex;
+}
+.pic {
+    border: 1px solid darkgray;
+    cursor: pointer;
+}
+.pic img {
+    width: 100%;
+    display: block
+ }
+.pic:hover {
+    opacity: 0.7;
+}
+</style>
+{% if images[0] %}
+<div class="gallery">
+  <h2>Traveling Gallery</h2>
+  <figure class="big-pic"><img src="{{ url_for('static', filename='posts_pics/' + images[0].image_file_path) }}" alt="#"></figure>
+  <div class="thumbnails">
+
+  {% for pic in images %}
+    <figure class="pic"><img src="{{ url_for('static', filename='posts_pics/' + pic.image_file_path) }}" alt="#"></figure>
+  {% endfor %}
+
+
+  </div>
+</div>
+{% endif %}
+<!--End Gallery of posts-->
+
+
+<!-- Comments -->
+    <div class="row bootstrap snippets">
+        <div class="col-md-6 col-md-offset-2 col-sm-12">
+            <div class="comment-wrapper">
+                <div class="panel panel-info">
+                    <h4>
+                        <div class="panel-heading">
+                            Comments
+                        </div>
+                    </h4>
+                    <div class="panel-body">
+                        <div class="clearfix"></div>
+                        <hr>
+                        <ul class="media-list">
+                            <form method="POST" action="">
+                                <input type="hidden" name="form-name" value="form">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">{{ legend }}</legend>
+                    <div class="form-group">
+                        {{ form.content.label(class="form-control-label") }}
+                         {% if form.content.errors %}
+                            {{ form.content(class="form-control form-control-md is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(class="form-control form-control-md") }}
+                        {% endif %}
+                    </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+           </form>
+                            {% for comment in comments %}
+                            <div class="row">
+                            <img style="width: 40px;height: 40px;" src="{{ url_for('static', filename='profile_pics/' + comment.author.image_file) }}" alt="" class="rounded-circle article-img">
+                            <article class="media content-section">
+                            <li class="media">
+                                <a href="#" class="pull-left">
+                                </a>
+                                <div class="media-body">
+                                    <span class="text-muted pull-right">
+                                        <small class="text-muted">{{ comment.date_posted.strftime('%d-%m-%Y') }}</small>
+                                    </span>
+                                    <strong class="text-success">{{ comment.author.username }}</strong>&nbsp;
+                                    <!--Do split to lines of comment-->
+                                    <p>
+                                        {{ comment.content }}
+                                    </p>
+                                </div>
+                            </li>
+                            </article>
+                            </div>
+                            {% endfor %}
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Comments End -->
+
+    <!-- Delete Confirmation -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="POST">
+                <button class="btn btn-danger btn-sm" type="submit" value="Delete"></button>
+            </form>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- Delete Confirmation End -->
+
+
+<!--Gallery script-->
+<script>
+window.onload = init;
+
+window.onresize = init;
+
+function init() {
+
+    // select big picture and thumbnails
+    var thumbnails = document.querySelectorAll( '.pic img' );
+    var bigPic = document.querySelector( '.big-pic img' );
+
+    // for each thumbnail add event listener for click
+    for ( var i = 0; i < thumbnails.length; i++ ) {
+
+      var currPic = thumbnails[ i ];
+      currPic.addEventListener( 'click', function() {
+        // set src attribute of big picture to the src of the clicked thumbnail.
+        // If attaching a handler function to an element using addEventListener(),
+        // the value of this inside the handler is a reference to the element.
+        var src = this.src;
+        bigPic.src = src;
+
+      });
+    }
+}
+</script>
+<!--End Gallery script-->
+
+
+{% endblock %}

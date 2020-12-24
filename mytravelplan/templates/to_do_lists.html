@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+    {% block content %}
+<legend class="border-bottom mb-4">{{ legend }}</legend>
+     <table style="width:100%">
+  <tr>
+    <td width="100">
+        <a href="{{ url_for('todolists.new_to_do_list') }}" class="btn btn-danger btn-md btn-block" role="button"><i class="glyphicon glyphicon-edit"></i>New</a></td>
+    <td width="100">
+
+         <a  href="{{ url_for('todolists.to_do_lists', post_id=0, to_do_list_id=0) }}"class="btn btn-md btn-block" >To do lists&nbsp; </a>
+    </td>
+</table>
+
+
+        {% for to_do_list in to_do_lists.items %}
+
+            <article class="media content-section">
+      <div class="media-body">
+
+        <div class="article-metadata">
+
+          <a class="mr-2" href="{{url_for('users.user_account_show', username=to_do_list.author.username)}}">{{ to_do_list.author.username }}</a>
+            <small class="text-muted">{{ to_do_list.date_posted.strftime('%d-%m-%Y') }}</small>
+            {% if to_do_list.author == current_user or current_user.admin_permissions == 1 %}
+                <a class="btn btn-secondary btn-sm m-1 mb-1 pull-right" href="{{ url_for('todolists.update_to_do_list', todolist_id=to_do_list.id ) }}">Update</a>
+                <button type="button" class="btn btn-danger btn-sm m-1 pull-right" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            {% endif %}
+            <h3 class="text-info"><a class="article-title" href="{{ url_for('todolists.to_do_list', todolist_id=to_do_list.id) }}">{{ to_do_list.title }}</a></h3>
+
+
+
+        </div>
+
+
+        <p class="article-content">{{ to_do_list.content }}</p>
+          <!--Posts appended to current to do list-->
+
+          <!--End Posts appended to current to do list-->
+      </div>
+
+            <!--Check if some post was chosen to be added to to do list-->
+            {% if post_id != 0 %}
+                <!--Add post to what to do list  form-->
+                <form method="POST" action="" enctype="multipart/form-data">
+                    {{ add_to_do_list_form.hidden_tag() }}
+                       <input id="5" name="id" type="hidden" value="{{ to_do_list.id }}">
+                        <input id="6"  name="addPost" type="hidden" value="addPost">
+                        <div class="form-group">
+                            {{ add_to_do_list_form.add(class="btn btn-outline-primary btn-md") }}
+                        </div>
+               </form>
+                <!--End Add post to what to do list  form-->
+                {% endif %}
+                <!--End Check if some post was chosen to be added to to do list-->
+
+
+
+
+    </article>
+
+
+
+        <!-- Delete Confirmation -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete To do list?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form action="{{ url_for('todolists.delete_to_do_list', todolist_id=to_do_list.id) }}" method="POST">
+                <input class="btn btn-danger btn-sm" type="submit" value="Delete">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Confirmation End -->
+
+{% endfor %}
+     {% for page_num in to_do_lists.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if to_do_lists.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+        {% endif %}
+        {% endfor %}
+    {% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+ <!--Menu-->
+        <h2>Messages</h2>
+      <table style="width:100%">
+  <tr>
+    <td width="100">
+        <a href="{{ url_for('messages.new_message', receiver='Name of receiver here..') }}" class="btn btn-danger btn-md btn-block" role="button"><i class="glyphicon glyphicon-edit"></i>New</a></td>
+    <td width="100">
+
+         <a href="{{ url_for('messages.inbox') }}" class="btn btn-md btn-block" ><span class="badge badge-warning pull-right">{{ msg_counters[0] }}</span>Inbox&nbsp; </a>
+    </td>
+    <td width="100">
+        <a href="{{ url_for('messages.unread_messages') }}" class="btn btn-md btn-block"><span class="badge badge-warning pull-right">{{ msg_counters[1] }}</span>Unread&nbsp; </a>
+    </td>
+     <td width="100">
+        <a href="{{ url_for('messages.sent_messages') }}" class="btn btn-md btn-block"><span class="badge badge-warning pull-right">{{ msg_counters[2] }}</span>Sent&nbsp; </a>
+    </td>
+
+</table>
+    <legend class="border-bottom mb-4">{{ message.subject }}</legend>
+    <!-- Post -->
+    <article class="media content-section">
+      <div class="media-body">
+        <div class="article-metadata">
+          {{ message.owner }}
+          <small class="text-muted">{{ message.date_posted.strftime('%d-%m-%Y') }}</small>
+            {% if message.owner == current_user.username or message.receiver == current_user.username or current_user.admin_permissions == 1 %}
+            <div>
+                <button type="button" class="btn btn-danger btn-sm m-1 pull-right" data-toggle="modal" data-target="#deleteModal">Delete</button>
+            </div>
+            {% endif %}
+        </div>
+        <h2 class="article-title">{{ message.Subject }}</h2>
+        <p class="article-content">{{ message.content }}</p>
+          <br>
+          <!--Images Of Post-->
+          <!--Images Of Post End-->
+      </div>
+    </article>
+    <!--Gallery of posts-->
+
+    <!-- Delete Confirmation -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Message?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form action="{{ url_for('messages.delete_message', message_id=message.id) }}" method="POST">
+                <input class="btn btn-danger" type="submit" value="Delete">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Confirmation End -->
+
+
+
+{% endblock %}

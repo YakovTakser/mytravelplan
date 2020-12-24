@@ -1,0 +1,4 @@
+ <!--<div>-->
+                <!--<a class="btn btn-secondary btn-sm m-1 mb-1" href="{{ url_for('todolists.update_to_do_list', todolist_id=to_do_list.id ) }}">Update</a>-->
+                <!--<button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>-->
+            <!--</div>-->

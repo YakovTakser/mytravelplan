@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+    {% block content %}
+    <div class="container">
+        <div class="row">
+        </div>
+        <!--Menu-->
+        <h2>Messages</h2>
+
+  <table style="width:100%">
+
+    <td width="100">
+        <a href="{{ url_for('messages.new_message', receiver='Name of receiver here..') }}" class="btn btn-danger btn-md btn-block" role="button"><i class="glyphicon glyphicon-edit"></i>New</a></td>
+    <td width="100">
+
+         <a href="{{ url_for('messages.inbox') }}" class="btn btn-md btn-block" ><span class="badge badge-warning pull-right">{{ msg_counters[0] }}</span>Inbox&nbsp; </a>
+    </td>
+    <td width="100">
+        <a href="{{ url_for('messages.unread_messages') }}" class="btn btn-md btn-block"><span class="badge badge-warning pull-right">{{ msg_counters[1] }}</span>Unread&nbsp; </a>
+    </td>
+     <td width="100">
+        <a href="{{ url_for('messages.sent_messages') }}" class="btn btn-md btn-block"><span class="badge badge-warning pull-right">{{ msg_counters[2] }}</span>Sent&nbsp; </a>
+    </td>
+     {% if current_user.admin_permissions == 1 %}
+                <a href="{{ url_for('messages.new_message_to_all') }}" class="btn btn-danger btn-md btn-block" role="button"><i class="glyphicon glyphicon-edit"></i>Message all</a></td>
+     {% endif %}
+
+</table>
+    <legend class="border-bottom mb-4">Unread</legend>
+
+    <!--Menu End-->
+
+    <!--Messages-->
+    <div class="col-md-12  align-top ">
+              <div class="content-section">
+                  {% if messages.items %}
+                    {% for message in messages.items %}
+                           <article class="media content-section text-secondary bg-light">
+                              <div class="media-body" >
+                                <div class="article-metadata">
+                                  {{ message.owner }}
+                                  <small class="text-muted">{{ message.date_posted.strftime('%d-%m-%Y') }}</small>
+                                </div>
+                                <h4><a class="article-title" href="{{ url_for('messages.message', message_id=message.id) }}">{{ message.subject }}</a></h4>
+                              </div>
+                        </article>
+                    <br>
+            {% endfor %}
+                  {% else %}
+                  <h4 style="opacity: 0.5; text-align:center;">You have no unread messages</h4>
+                  {% endif %}
+
+                    <!--Pagination-->
+            {% for page_num in messages.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if messages.page == page_num %}
+                    <a class="btn btn-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                    <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+            {% endif %}
+            {% endfor %}
+         <!--Pagination End-->
+            </div>
+         </div>
+        <!--Messages End-->
+    </div>
+    {% endblock %}

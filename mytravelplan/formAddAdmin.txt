@@ -1,0 +1,15 @@
+        <!--Admin Permissions-->
+                    <div class="form-group">
+                        {{ form.admin_permissions.label(class="form-control-label") }}
+                         {% if form.admin_permissions.errors %}
+                            {{ form.admin_permissions(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.admin_permissions.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.admin_permissions(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <!--Admin Permissions End-->

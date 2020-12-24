@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+    {% block content %}
+      <form method="POST" action="" enctype="multipart/form-data">
+            {{ add_post_form.hidden_tag() }}
+               <input id="6" name="id" type="hidden" value="{{ post.id }}">
+
+              <div class="pull-right" class="form-group">
+                         {% if add_post_form.to_do_list_name.errors %}
+                            {{ add_post_form.to_do_list_name(class="form-control form-control-md is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in add_post_form.to_do_list_name.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ add_post_form.to_do_list_name(class="form-control form-control-md") }}
+                        {% endif %}
+                    </div>
+                   <div class="pull-right" class="form-group">
+                         {% if add_post_form.content.errors %}
+                            {{ add_post_form.content(class="form-control form-control-md is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in add_post_form.content.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ add_post_form.content(class="form-control form-control-md") }}
+                        {% endif %}
+                    </div>
+
+                   <div class="pull-right" class="form-group">
+                    {{ add_post_form.add(class="btn btn-outline-primary btn-md") }}
+                </div>
+      </form>
+
+    {% endblock %}
